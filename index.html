@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>捷運系統 - 員工行政公告與差勤網</title>
+    <style>
+        /* 整體頁面背景與字型設定 */
+        body {
+            background-color: #121e16; /* 深綠色系，呼應捷運調性 */
+            color: #e0e0e0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* 頂部導覽列 */
+        header {
+            background-color: #192e21;
+            border-bottom: 2px solid #2d4a35;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 30px;
+        }
+
+        .header-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 20px;
+            font-weight: bold;
+            color: #f1c40f; /* 捷運黃色點綴 */
+        }
+
+        .login-btn {
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .login-btn:hover {
+            background-color: #219653;
+        }
+
+        /* 主容器：雙框設計 */
+        .main-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #1c3324;
+            border: 3px solid #b8860b; /* 仿框線邊框 */
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.4);
+        }
+
+        .section-title {
+            color: #f1c40f;
+            font-size: 18px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 內容區塊雙欄排版 */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .card {
+            background-color: #15291c;
+            border: 1px solid #2d4a35;
+            border-radius: 6px;
+            padding: 20px;
+            min-height: 250px;
+        }
+
+        /* 響應式調整 */
+        @media (max-width: 768px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- 頂部導覽列 -->
+    <header>
+        <div class="header-title">
+            <span>🚇</span>
+            <span>捷運系統 員工行政公告與差勤網</span>
+        </div>
+        <button class="login-btn" onclick="alert('行政專用登入介面（僅限管理層）')">登入管理</button>
+    </header>
+
+    <!-- 主畫面內容 -->
+    <div class="main-container">
+        <div class="content-grid">
+            <!-- 左側：公告與打卡專區 -->
+            <div class="card">
+                <div class="section-title">📁 重要行政公告與員工打卡專區</div>
+                <p>目前尚無最新行政公告。請點選右上角「登入管理」進行系統設定與公告發布、打卡資料檢視。</p>
+            </div>
+
+            <!-- 右側：行事曆或日期顯示區 -->
+            <div class="card">
+                <div class="section-title">📅 值班與行事曆</div>
+                <p style="text-align: center; color: #a0a0a0;">載入行事曆中...</p>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
