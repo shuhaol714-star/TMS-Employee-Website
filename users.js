@@ -1,13 +1,17 @@
 // ==========================================
 // 🔑 獨立人員帳號設定檔 (users.js)
-// 角色可設定為："管理員"、"行政人員" 或 "員工"
+// 排序順序：行政人員 ➔ 管理員 ➔ 員工
 // ==========================================
 
 const userDatabase = [
-    { username: "admin", password: "123", name: "系統總管理員", role: "管理員", badgeClass: "badge-admin" },
-    { username: "staff", password: "123", name: "王專員",       role: "行政人員", badgeClass: "badge-staff" },
-    { username: "emp01", password: "123", name: "張司機員",     role: "員工",     badgeClass: "badge-employee" },
+    // 1. 行政人員
+    { username: "lllyuix",   password: "0216", name: "副經理",       role: "行政人員", badgeClass: "badge-staff" },
     
-    // 💡 未來要新增人員，直接複製底下格式貼在上方即可：
-    // { username: "帳號", password: "密碼", name: "姓名", role: "員工", badgeClass: "badge-employee" }
+    // 2. 管理員
+    { username: "admin",   password: "123", name: "系統管理員", role: "管理員",   badgeClass: "badge-admin" },
+    
+    // 3. 員工
+    { username: "emp01",   password: "123", name: "張司機員",     role: "員工",     badgeClass: "badge-employee" },
+    
+    // 💡 未來要新增其他人員，可依照您想要的排序直接加在對應的位置！
 ];
