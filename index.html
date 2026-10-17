@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷運系統 - 員工行政公告與差勤網</title>
     <style>
-        /* 整體頁面背景改為白色 */
         body {
             background-color: #ffffff;
             color: #2c3e50;
@@ -14,7 +13,6 @@
             padding: 0;
         }
 
-        /* 頂部導覽列（深色沉穩捷運風格） */
         header {
             background-color: #1a252f;
             border-bottom: 3px solid #f39c12;
@@ -31,7 +29,7 @@
             gap: 12px;
             font-size: 20px;
             font-weight: bold;
-            color: #f39c12; /* 捷運黃色標題 */
+            color: #f39c12;
         }
 
         .login-btn {
@@ -50,7 +48,6 @@
             background-color: #219653;
         }
 
-        /* 主外框容器：淡灰色背景加微陰影 */
         .main-container {
             max-width: 1200px;
             margin: 30px auto;
@@ -73,14 +70,12 @@
             padding-bottom: 8px;
         }
 
-        /* 內容區塊雙欄排版 */
         .content-grid {
             display: grid;
             grid-template-columns: 2fr 1fr;
             gap: 20px;
         }
 
-        /* 卡片與公告區域：灰色區塊設計 */
         .card {
             background-color: #ffffff;
             border: 1px solid #ced4da;
@@ -89,7 +84,6 @@
             min-height: 250px;
         }
 
-        /* 公告公告內層灰色背景框 */
         .announcement-box {
             background-color: #e9ecef;
             border-left: 4px solid #34495e;
@@ -99,7 +93,66 @@
             margin-top: 10px;
         }
 
-        /* 響應式調整 */
+        /* 彈出登入框樣式 */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            width: 320px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            text-align: center;
+        }
+
+        .modal-content input {
+            width: 100%;
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .modal-content button {
+            width: 100%;
+            padding: 10px;
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-weight: bold;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .modal-content button:hover {
+            background-color: #2471a3;
+        }
+
+        .close-btn {
+            float: right;
+            font-size: 20px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+
+        .close-btn:hover {
+            color: #000;
+        }
+
         @media (max-width: 768px) {
             .content-grid {
                 grid-template-columns: 1fr;
@@ -115,7 +168,7 @@
             <span>🚇</span>
             <span>捷運系統 員工行政公告與差勤網</span>
         </div>
-        <button class="login-btn" onclick="alert('行政專用登入介面（僅限管理層）')">登入管理</button>
+        <button class="login-btn" onclick="openLoginModal()">登入 / 註冊</button>
     </header>
 
     <!-- 主畫面內容 -->
@@ -124,9 +177,9 @@
             <!-- 左側：公告與打卡專區 -->
             <div class="card">
                 <div class="section-title">📁 重要行政公告與員工打卡專區</div>
-                <div class="announcement-box">
+                <div class="announcement-box" id="welcome-msg">
                     <strong>【系統提示】</strong><br>
-                    目前尚無最新行政公告。請點選右上角「登入管理」進行系統設定、發布行政公告與檢視員工打卡紀錄。
+                    目前尚未登入。請點選右上角「登入 / 註冊」來設定或輸入您的專屬帳號密碼！
                 </div>
             </div>
 
@@ -137,6 +190,53 @@
             </div>
         </div>
     </div>
+
+    <!-- 登入/註冊彈出視窗 -->
+    <div id="loginModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeLoginModal()">&times;</span>
+            <h3 style="margin-top: 0; color: #2c3e50;">員工系統登入 / 註冊</h3>
+            <p style="font-size: 12px; color: #7f8c8d;">輸入您的自訂帳號與密碼（首次輸入將自動建立帳號）</p>
+            <input type="text" id="username" placeholder="請輸入自訂帳號">
+            <input type="password" id="password" placeholder="請輸入自訂密碼">
+            <button onclick="handleAuth()">確認登入 / 註冊</button>
+        </div>
+    </div>
+
+    <script>
+        function openLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+
+        function closeLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+
+        function handleAuth() {
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('password').value.trim();
+
+            if (!user || !pass) {
+                alert('帳號和密碼不能為空！');
+                return;
+            }
+
+            // 簡單將帳號密碼存在瀏覽器中
+            localStorage.setItem('tms_user', user);
+            alert(`歡迎您，${user}！帳號設定成功並已登入。`);
+            
+            document.getElementById('welcome-msg').innerHTML = `<strong>【登入成功】</strong><br>歡迎回來，員工：<strong>${user}</strong>。您可以開始進行打卡或檢視行政公告。`;
+            closeLoginModal();
+        }
+
+        // 檢查是否曾經登入過
+        window.onload = function() {
+            const savedUser = localStorage.getItem('tms_user');
+            if (savedUser) {
+                document.getElementById('welcome-msg').innerHTML = `<strong>【系統狀態】</strong><br>當前登入員工：<strong>${savedUser}</strong>。`;
+            }
+        }
+    </script>
 
 </body>
 </html>
