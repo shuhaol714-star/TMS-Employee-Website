@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷運系統 - 員工行政公告與差勤網</title>
+    <!-- 引入獨立的帳號資料庫檔 -->
+    <script src="users.js"></script>
     <style>
         body {
             background-color: #ffffff;
@@ -46,6 +48,17 @@
 
         .login-btn:hover {
             background-color: #219653;
+        }
+
+        .logout-btn {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
         }
 
         .main-container {
@@ -93,7 +106,20 @@
             margin-top: 10px;
         }
 
-        /* 彈出登入框樣式 */
+        .role-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+            color: white;
+            margin-left: 5px;
+        }
+
+        .badge-admin { background-color: #e74c3c; }
+        .badge-staff { background-color: #2980b9; }
+        .badge-employee { background-color: #27ae60; }
+
         .modal {
             display: none;
             position: fixed;
@@ -114,6 +140,7 @@
             width: 320px;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
             text-align: center;
+            position: relative;
         }
 
         .modal-content input {
@@ -128,7 +155,7 @@
         .modal-content button {
             width: 100%;
             padding: 10px;
-            background-color: #2980b9;
+            background-color: #1a252f;
             color: white;
             border: none;
             border-radius: 4px;
@@ -137,20 +164,14 @@
             margin-top: 10px;
         }
 
-        .modal-content button:hover {
-            background-color: #2471a3;
-        }
-
         .close-btn {
-            float: right;
+            position: absolute;
+            top: 10px;
+            right: 15px;
             font-size: 20px;
             font-weight: bold;
             cursor: pointer;
             color: #aaa;
-        }
-
-        .close-btn:hover {
-            color: #000;
         }
 
         @media (max-width: 768px) {
@@ -168,22 +189,22 @@
             <span>🚇</span>
             <span>捷運系統 員工行政公告與差勤網</span>
         </div>
-        <button class="login-btn" onclick="openLoginModal()">登入 / 註冊</button>
+        <div id="auth-area">
+            <button class="login-btn" onclick="openLoginModal()">員工 / 管理員登入</button>
+        </div>
     </header>
 
     <!-- 主畫面內容 -->
     <div class="main-container">
         <div class="content-grid">
-            <!-- 左側：公告與打卡專區 -->
             <div class="card">
                 <div class="section-title">📁 重要行政公告與員工打卡專區</div>
                 <div class="announcement-box" id="welcome-msg">
                     <strong>【系統提示】</strong><br>
-                    目前尚未登入。請點選右上角「登入 / 註冊」來設定或輸入您的專屬帳號密碼！
+                    目前尚未登入。請點選右上角進行身分認證登入。
                 </div>
             </div>
 
-            <!-- 右側：行事曆或日期顯示區 -->
             <div class="card">
                 <div class="section-title">📅 值班與行事曆</div>
                 <p style="text-align: center; color: #6c757d; margin-top: 40px;">載入行事曆與班表資料中...</p>
@@ -191,15 +212,15 @@
         </div>
     </div>
 
-    <!-- 登入/註冊彈出視窗 -->
+    <!-- 登入彈出視窗 -->
     <div id="loginModal" class="modal">
         <div class="modal-content">
             <span class="close-btn" onclick="closeLoginModal()">&times;</span>
-            <h3 style="margin-top: 0; color: #2c3e50;">員工系統登入 / 註冊</h3>
-            <p style="font-size: 12px; color: #7f8c8d;">輸入您的自訂帳號與密碼（首次輸入將自動建立帳號）</p>
-            <input type="text" id="username" placeholder="請輸入自訂帳號">
-            <input type="password" id="password" placeholder="請輸入自訂密碼">
-            <button onclick="handleAuth()">確認登入 / 註冊</button>
+            <h3 style="margin-top: 0; color: #1a252f;">內部人員系統登入</h3>
+            <p style="font-size: 12px; color: #7f8c8d;">請輸入獲派發之公用帳號與密碼</p>
+            <input type="text" id="username" placeholder="帳號">
+            <input type="password" id="password" placeholder="密碼">
+            <button onclick="handleLogin()">登入系統</button>
         </div>
     </div>
 
@@ -212,28 +233,56 @@
             document.getElementById('loginModal').style.display = 'none';
         }
 
-        function handleAuth() {
-            const user = document.getElementById('username').value.trim();
-            const pass = document.getElementById('password').value.trim();
+        function handleLogin() {
+            const inputUser = document.getElementById('username').value.trim();
+            const inputPass = document.getElementById('password').value.trim();
 
-            if (!user || !pass) {
-                alert('帳號和密碼不能為空！');
+            // 確保 users.js 正常載入
+            if (typeof userDatabase === 'undefined') {
+                alert('系統錯誤：找不到帳號資料庫檔 (users.js)！');
                 return;
             }
 
-            // 簡單將帳號密碼存在瀏覽器中
-            localStorage.setItem('tms_user', user);
-            alert(`歡迎您，${user}！帳號設定成功並已登入。`);
-            
-            document.getElementById('welcome-msg').innerHTML = `<strong>【登入成功】</strong><br>歡迎回來，員工：<strong>${user}</strong>。您可以開始進行打卡或檢視行政公告。`;
-            closeLoginModal();
+            // 比對外部 users.js 的帳號資料
+            const foundUser = userDatabase.find(u => u.username === inputUser && u.password === inputPass);
+
+            if (foundUser) {
+                localStorage.setItem('tms_current_user', JSON.stringify(foundUser));
+                updateUI(foundUser);
+                closeLoginModal();
+                alert(`登入成功！歡迎 ${foundUser.name} (${foundUser.role})`);
+            } else {
+                alert('帳號或密碼錯誤！請重新輸入。');
+            }
         }
 
-        // 檢查是否曾經登入過
+        function handleLogout() {
+            localStorage.removeItem('tms_current_user');
+            location.reload();
+        }
+
+        function updateUI(user) {
+            const authArea = document.getElementById('auth-area');
+            const welcomeMsg = document.getElementById('welcome-msg');
+
+            authArea.innerHTML = `
+                <span style="color: white; font-size: 14px;">${user.name}</span>
+                <span class="role-badge ${user.badgeClass}">${user.role}</span>
+                <button class="logout-btn" onclick="handleLogout()">登出</button>
+            `;
+
+            welcomeMsg.innerHTML = `
+                <strong>【身分認證成功】</strong><br>
+                歡迎回來，<strong>${user.name}</strong> 尊駕。<br>
+                當前權限層級：<span class="role-badge ${user.badgeClass}">${user.role}</span><br><br>
+                ${user.role === '管理員' || user.role === '行政人員' ? '您可以管理行政公告、發布班表以及審核員工打卡資料。' : '您可以進行今日差勤打卡及查看班表。'}
+            `;
+        }
+
         window.onload = function() {
-            const savedUser = localStorage.getItem('tms_user');
+            const savedUser = localStorage.getItem('tms_current_user');
             if (savedUser) {
-                document.getElementById('welcome-msg').innerHTML = `<strong>【系統狀態】</strong><br>當前登入員工：<strong>${savedUser}</strong>。`;
+                updateUI(JSON.parse(savedUser));
             }
         }
     </script>
