@@ -116,8 +116,8 @@
             margin-left: 5px;
         }
 
-        .badge-admin { background-color: #e74c3c; }
         .badge-staff { background-color: #2980b9; }
+        .badge-admin { background-color: #e74c3c; }
         .badge-employee { background-color: #27ae60; }
 
         .modal {
@@ -218,7 +218,7 @@
             <span class="close-btn" onclick="closeLoginModal()">&times;</span>
             <h3 style="margin-top: 0; color: #1a252f;">內部人員系統登入</h3>
             <p style="font-size: 12px; color: #7f8c8d;">請輸入獲派發之公用帳號與密碼</p>
-            <input type="text" id="username" placeholder="帳號">
+            <input type="text" id="username" placeholder="帳號" autocomplete="off">
             <input type="password" id="password" placeholder="密碼">
             <button onclick="handleLogin()">登入系統</button>
         </div>
@@ -237,13 +237,13 @@
             const inputUser = document.getElementById('username').value.trim();
             const inputPass = document.getElementById('password').value.trim();
 
-            // 確保 users.js 正常載入
+            // 檢查 users.js 是否成功載入
             if (typeof userDatabase === 'undefined') {
-                alert('系統錯誤：找不到帳號資料庫檔 (users.js)！');
+                alert('系統錯誤：無法讀取 users.js 檔案，請檢查檔案名稱是否正確！');
                 return;
             }
 
-            // 比對外部 users.js 的帳號資料
+            // 比對帳號與密碼
             const foundUser = userDatabase.find(u => u.username === inputUser && u.password === inputPass);
 
             if (foundUser) {
@@ -252,7 +252,7 @@
                 closeLoginModal();
                 alert(`登入成功！歡迎 ${foundUser.name} (${foundUser.role})`);
             } else {
-                alert('帳號或密碼錯誤！請重新輸入。');
+                alert('帳號或密碼錯誤！請確認輸入內容是否正確。');
             }
         }
 
@@ -266,7 +266,7 @@
             const welcomeMsg = document.getElementById('welcome-msg');
 
             authArea.innerHTML = `
-                <span style="color: white; font-size: 14px;">${user.name}</span>
+                <span style="color: white; font-size: 14px; margin-right: 5px;">${user.name}</span>
                 <span class="role-badge ${user.badgeClass}">${user.role}</span>
                 <button class="logout-btn" onclick="handleLogout()">登出</button>
             `;
