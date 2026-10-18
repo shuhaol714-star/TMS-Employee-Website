@@ -4,8 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>捷運系統 - 員工行政公告與差勤網</title>
-    <!-- 引入獨立的帳號資料庫檔 -->
-    <script src="users.js"></script>
     <style>
         body {
             background-color: #ffffff;
@@ -183,6 +181,26 @@
 </head>
 <body>
 
+    <script>
+        // =====================================================================
+        // 🔑 【帳號獨立設定區】
+        // 您隨時可以直接在這裡修改帳號、密碼、姓名與身分！
+        // 排序順序：行政人員 ➔ 管理員 ➔ 員工
+        // =====================================================================
+        const userDatabase = [
+            // 1. 行政人員
+            { username: "lllyuix",   password: "0216", name: "副經理",       role: "行政人員", badgeClass: "badge-staff" },
+            
+            // 2. 管理員
+            { username: "admin",   password: "123", name: "系統總管理員", role: "管理員",   badgeClass: "badge-admin" },
+            
+            // 3. 員工
+            { username: "emp01",   password: "123", name: "張司機員",     role: "員工",     badgeClass: "badge-employee" }
+            
+            // 💡 若要新增人員，可直接在此處複製貼上格式新增！
+        ];
+    </script>
+
     <!-- 頂部導覽列 -->
     <header>
         <div class="header-title">
@@ -237,13 +255,6 @@
             const inputUser = document.getElementById('username').value.trim();
             const inputPass = document.getElementById('password').value.trim();
 
-            // 檢查 users.js 是否成功載入
-            if (typeof userDatabase === 'undefined') {
-                alert('系統錯誤：無法讀取 users.js 檔案，請檢查檔案名稱是否正確！');
-                return;
-            }
-
-            // 比對帳號與密碼
             const foundUser = userDatabase.find(u => u.username === inputUser && u.password === inputPass);
 
             if (foundUser) {
